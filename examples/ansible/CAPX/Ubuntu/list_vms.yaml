@@ -1,0 +1,32 @@
+---
+- name: CAPX VM Provisioning
+  hosts: localhost
+  gather_facts: false
+  collections:
+    - nutanix.ncp
+  module_defaults:
+    group/nutanix.ncp.ntnx:
+      nutanix_host: "demo-pc.thencpnutanix.com"
+      # nutanix_username: "admin"
+      # nutanix_password: "tmes4EVA!"
+      #nutanix_host: "10.42.82.39"
+      nutanix_username: "admin"
+      nutanix_password: "tmes4EVA!"
+      validate_certs: false
+  tasks:
+    - name: Include vars file
+      ansible.builtin.include_vars:
+        file: vars.yml
+    - name: List VMS using name filter criteria
+      ntnx_vms_info:
+        nutanix_host: "{{ ip }}"
+        nutanix_username: "{{ username }}"
+        nutanix_password: "{{ password }}"
+        validate_certs: False
+        filter:
+          {vm_name: "demo", power_state: on}
+#          "vm_name: "demo";cluster: "0006089d-964c-0934-0000-000000019b10""
+        kind: vm
+      register: result
+    - debug:
+        msg: "name: {{ result.response }}"

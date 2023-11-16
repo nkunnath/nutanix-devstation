@@ -1,0 +1,267 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: ndb-secret
+type: Opaque
+stringData:
+  username: admin
+  password: tmes4EVA!
+  ca_certificate: |
+    -----BEGIN CERTIFICATE-----
+    CA CERTIFICATE (ca_certificate is optional)
+    -----END CERTIFICATE-----
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: db-instance-secret
+type: Opaque
+stringData:
+  password: nutanix/4u
+  ssh_public_key: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQC0CnG8luCI/6BQFeBCex05Zg0vJ/R9cQ+wEJHpMQCiLcQ04u8DQ4FrLk62KMUmkvuuey0AUzHiPCc1Yk0c+6jE4LuKVL2ug1LyDbbEQmcdPExjClcz9vH8VYQO1FJ+ZZctKFL6uPSPXTrZvd427FCv4UVhgk0yg4dk6TQ6RYZcsT2Md68K2e4tZj6pcaxLoyw9Ok7YM/PRoE6daOrS6zzj+kZAmj+4885AfC3m6ONsQm8jaHxO5xVcMcbvhNZPm7qNfP0cMSdgnFGE8DdPfoPnjnkU7UvIxkr5Qu6IgcjtisB/siSpjsZmKvtPASeqOPQCugfLiY6T19oqcNPh7cx81V+Fqr9RZURI/0ydIYZloXtWP34AwhTquw5p0YPjqNagUGfOZTswCVkjcfyBOuuvsd1cS95GkuoZ9SwMZZCVGSb+8SBXqna/CVtA2F9Rq9C3HiVMoQaW4djvmTu9dqehr9n5+Dwldz7QQoyO8gr8znCuChjRNihef+wMG7eUXRxMyeOslGEh8VvdWLUjbML4EjPqR7tETsUZNN5vajorcAMRTrydjKPv5RI4nbAqo4swhTCsBmsy1x42yHIuAlrfFCWq6f/jJiPtFPvdJOTis1YqVydp+vTu+t63BVM5m7izp5P0hA7kuYeyzZDMoqshFKtl/SQMYcR7iozmRZiSsQ== root@CentOS.localdomain
+
+---
+
+apiVersion: ndb.nutanix.com/v1alpha1
+kind: NDBServer
+metadata:
+  labels:
+    app.kubernetes.io/name: ndbserver
+    app.kubernetes.io/instance: ndbserver
+    app.kubernetes.io/part-of: ndb-operator
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/created-by: ndb-operator
+  name: ndbserver-kubecon
+spec:
+    # Name of the secret that holds the credentials for NDB: username, password and ca_certificate (created in step 1) 
+    credentialSecret: ndb-secret
+    # NDB Server's API URL
+    server: https://10.42.36.171:8443/era/v0.9
+    # Set to true to skip SSL certificate validation, should be false if ca_certificate is provided in the credential secret.
+    skipCertificateVerification: true
+
+---
+
+apiVersion: ndb.nutanix.com/v1alpha1
+kind: Database
+metadata:
+  name: postgres-kubecon
+  labels:
+    db: postgres
+spec:
+  clone: {}
+  databaseInstance:
+    size: 10
+    credentialSecret: db-instance-secret
+    profiles:
+      compute:
+        id: ''
+        name: DEFAULT_OOB_SMALL_COMPUTE
+      dbParam:
+        id: ''
+        name: ''
+      dbParamInstance:
+        id: ''
+        name: ''
+      network:
+        id: ''
+        name: ''
+      software:
+        id: ''
+        name: POSTGRES_10.4_OOB
+    name: postgres-kubecon
+    databaseNames:
+      - redhat
+      - chicago
+    additionalArguments: {}
+    clusterId: e706fbc5-d453-4edf-8057-32b4ea8fd62b
+    timezone: UTC
+    timeMachine:
+      quarterlySnapshotMonth: Feb
+      sla: DEFAULT_OOB_GOLD_SLA
+      logCatchUpFrequency: 90
+      dailySnapshotTime: '12:34:56'
+      monthlySnapshotDay: 24
+      name: ''
+      snapshotsPerDay: 4
+      weeklySnapshotDay: TUESDAY
+      description: ''
+    type: postgres
+    description: 'Database provisioned by ndb-operator at Kubecon Chicago'
+  isClone: false
+  ndbRef: ndbserver-kubecon
+
+
+
+
+
+---
+### MongoDB Database
+apiVersion: ndb.nutanix.com/v1alpha1
+kind: Database
+metadata:
+  name: mongodb-kubecon
+  labels:
+    db: mongodb
+spec:
+  clone: {}
+  databaseInstance:
+    size: 20
+    credentialSecret: db-instance-secret
+    profiles:
+      compute:
+        name: DEFAULT_OOB_COMPUTE
+      dbParam: {}
+      dbParamInstance: {}
+      network: {}
+      software:
+        name: 'mongo-emea'
+    name: mongodb-kubecon
+    databaseNames:
+      - mongodb_chicago
+    additionalArguments:
+      journal_size: '150'
+      listener_port: '1111'
+      log_size: '150'
+    clusterId: e706fbc5-d453-4edf-8057-32b4ea8fd62b
+    timezone: UTC
+    timeMachine:
+      quarterlySnapshotMonth: Jan
+      sla: DEFAULT_OOB_SILVER_SLA
+      logCatchUpFrequency: 30
+      dailySnapshotTime: '04:00:00'
+      monthlySnapshotDay: 15
+      name: ''
+      snapshotsPerDay: 1
+      weeklySnapshotDay: FRIDAY
+      description: ''
+    type: mongodb
+    description: 'MongoDB provisioned by ndb-operator at Kubecon Chicago'
+  isClone: false
+  ndbRef: ndbserver-kubecon
+---
+
+
+---
+### MySQL Database
+apiVersion: ndb.nutanix.com/v1alpha1
+kind: Database
+metadata:
+  name: mysql-kubecon
+  namespace: mysql-demo
+  labels:
+    db: mysql
+spec:
+  clone: {}
+  databaseInstance:
+    size: 20
+    credentialSecret: db-instance-secret
+    profiles:
+      compute:
+        name: DEFAULT_OOB_COMPUTE
+      dbParam: {}
+      dbParamInstance: {}
+      network: {}
+      software: {}
+    name: mysql-kubecon
+    databaseNames:
+      - mysql_chicago
+    additionalArguments: {}
+    clusterId: e706fbc5-d453-4edf-8057-32b4ea8fd62b
+    timezone: UTC
+    timeMachine:
+      quarterlySnapshotMonth: Jan
+      sla: DEFAULT_OOB_SILVER_SLA
+      logCatchUpFrequency: 30
+      dailySnapshotTime: '04:00:00'
+      monthlySnapshotDay: 15
+      name: ''
+      snapshotsPerDay: 1
+      weeklySnapshotDay: FRIDAY
+      description: ''
+    type: mysql
+    description: 'MySQL provisioned by ndb-operator at Kubecon Chicago'
+  isClone: false
+  ndbRef: ndbserver-kubecon
+
+---
+
+### Clone a Database
+
+
+apiVersion: ndb.nutanix.com/v1alpha1
+kind: Database
+metadata:
+  name: cloned-postgres-kubecon
+  labels:
+    db: postgres
+spec:
+  clone:
+    credentialSecret: db-instance-secret
+    profiles: {}
+    name: cloned-postgres-kubecon
+    additionalArguments: {}
+    sourceDatabaseId: cb9e79b9-efee-454b-bab8-f03352ca5936 # GET /databases
+    clusterId: e706fbc5-d453-4edf-8057-32b4ea8fd62b
+    timezone: UTC
+    type: postgres
+    description: 'Cloned Database provisioned by ndb-operator at Kubecon Chicago'
+    snapshotId: c2c6eae8-d636-46ab-bfb6-a108ca493122  # GET existing /snapshot
+  databaseInstance:
+    size: 10
+    credentialSecret: db-instance-secret
+    profiles:
+      compute:
+        id: ''
+        name: ''
+      dbParam:
+        id: ''
+        name: ''
+      dbParamInstance:
+        id: ''
+        name: ''
+      network:
+        id: ''
+        name: ''
+      software:
+        id: ''
+        name: ''
+    name: cloned-postgres-kubecon
+    databaseNames:
+      - cloned_redhat
+    additionalArguments:
+      listener_port: '8080'
+    clusterId: e706fbc5-d453-4edf-8057-32b4ea8fd62b
+    timezone: UTC
+    timeMachine:
+      quarterlySnapshotMonth: Jan
+      sla: DEFAULT_OOB_SILVER_SLA
+      logCatchUpFrequency: 90
+      dailySnapshotTime: '12:34:56'
+      monthlySnapshotDay: 24
+      name: ''
+      snapshotsPerDay: 4
+      weeklySnapshotDay: WEDNESDAY
+      description: ''
+    type: postgres
+    description: 'Cloned Database provisioned by ndb-operator at Kubecon Chicago'
+  isClone: true
+  ndbRef: ndbserver-kubecon
+
+
+
+---
+
+oc exec -it psql -- /bin/sh
+
+psql -h nk-demo1-svc -p 80 -U postgres -d redhat
+
+mongosh admin --host mongodb-sla-svc --authenticationDatabase mongodb_sla_database_one -u admin -p tmes4EVA!
+
+
+
+Connect as user era
+ssh era@10.42.36.189
+psql "postgresql://10.42.36.189:5432/postgres?user=postgres&password=nutanix/4u" postgres -c "\d ;"
+
+---

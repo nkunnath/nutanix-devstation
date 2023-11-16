@@ -1,0 +1,22 @@
+CONTROL_PLANE_ENDPOINT_IP: "10.42.236.126"   # An IP address not in IPAM
+NUTANIX_ENDPOINT: "my-pc.thencpnutanix.com"    # IP or FQDN of Prism Central
+NUTANIX_USER: "admin"        # Prism Central user
+NUTANIX_PASSWORD: "tmes4EVA!"    # Prism Central password
+NUTANIX_INSECURE: true # or true
+
+KUBERNETES_VERSION: "v1.25.9"
+WORKER_MACHINE_COUNT: 3
+NUTANIX_SSH_AUTHORIZED_KEY: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCpTAxjZAS0KZhUyZJhjqKOnsHXlFOBjhv2MAeDiSN1blUhklWjFmFl8vbLkYMW69GEu8d7ymp1JhUVkt2l6Qfld8inWTuSVFQJ2cMnifiyvXiBeHczP33iCA5a0Tf85alH8wvoOUTdzgRmGKnoho+b+cD73YsDstodhF9iu1FZdyT4bF8OnppDNoTSaUhEkBgdAzjAb2kCr0R7R8xnRrGaU5o6sH7zyeULmclZiYV+OFh2mx52A6UDAZTyWDu4N42GTFSSgkqyuafWNfPTy8qfRa24c4th3Dgnz9jSFQA8k58YnWsstT0ALmWKfbLKjOL+r/d6CvxJLL9tQMR/tmsFNdHlUIatqsOhKZDDjDzLoS/C4OroHXCMc+ykY+5uwavPRwUlWaY+kWjfES7kD8Urs07MVLW8yFvjE6DnsRKsEdSg+oPvVtMpywBgLUFlz9CnpTnt8BTilE+ynVqKFl2qbozM/7cUG9hRQBiriicq1aDy+XAUgDkDLQKp4mUTRI8= nimal.kunnath@C02C74VJLVDL"
+NUTANIX_MACHINE_VCPU_SOCKET: 4
+NUTANIX_MACHINE_MEMORY_SIZE: "8Gi"
+NUTANIX_PRISM_ELEMENT_CLUSTER_NAME: "PHX-MKT236"
+NUTANIX_MACHINE_TEMPLATE_IMAGE_NAME: "Ubuntu-22.04-k8s-v1.25.9"    # An image that exists in cluster
+NUTANIX_SUBNET_NAME: "Primary"
+
+
+EXP_CLUSTER_RESOURCE_SET: "true"    # Experimental for testing CCM and Autoscaling
+EXP_MACHINE_POOL: "true"          # Experimental
+CLUSTER_TOPOLOGY: "true"          # Experimental
+
+
+

@@ -1,0 +1,206 @@
+
+---
+### Fetch the AZ UUID from PC and PE UUID
+
+curl  -k -X 'POST' 'https://demo-pc.thencpnutanix.com:9440/api/nutanix/v3/availability_zones/list' \
+-H 'accept: application/json' \
+-u admin:tmes4EVA! \
+-H 'Content-Type: application/json' \
+-H 'X-Nutanix-Client-Type: ui' \
+-d '{"kind": "availability_zone"}
+
+
+curl -k -X 'GET' -H 'accept: application/json' 'https://10.42.236.37:9440/api/nutanix/v2.0/cluster' -u admin:tmes4EVA! 
+
+---
+
+### StorageCluster on source k8s cluster
+
+apiVersion: dataservices.nutanix.com/v1alpha1
+kind: StorageCluster
+metadata:
+  name: source-storage-cluster
+spec:
+  handle: 0006089d-964c-0934-0000-000000019b10
+  availabilityZoneHandle: 252b1a4c-1680-48d1-976b-75cefb3e0570
+
+---
+
+### StorageCluster on destination k8s cluster
+
+apiVersion: dataservices.nutanix.com/v1alpha1
+kind: StorageCluster
+metadata:
+  name: target-storage-cluster
+spec:
+  handle: 0006085c-48ef-0aae-0000-00000002ad3c
+  availabilityZoneHandle: 252b1a4c-1680-48d1-976b-75cefb3e0570
+
+---
+
+### This is on Target cluster
+
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: zookeeper-dr-sa
+  namespace: default
+secrets:
+  - name: zookeeper-dr-sa-secret
+
+---
+apiVersion: v1
+kind: Secret
+type: kubernetes.io/service-account-token
+metadata:
+  name: zookeeper-dr-sa-secret
+  annotations:
+    kubernetes.io/service-account.name: "zookeeper-dr-sa"
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: zookeeper-dr-cluster-role
+rules:
+- apiGroups: ["dataservices.nutanix.com"]
+  resources: ["applicationsnapshotcontents", "applicationsnapshotcontents/status"]
+  verbs: ["create", "update", "get"]
+- apiGroups: ["dataservices.nutanix.com"]
+  resources: ["storageclusters"]
+  verbs: ["get", "watch", "list"]
+- apiGroups: [""]
+  resources: ["secrets"]
+  verbs: ["create", "get”, "update"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: zookeeper-dr-role
+  namespace: default
+rules:
+- apiGroups: ["*"]
+  resources: ["*"]
+  verbs: ["*"]
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: zookeeper-dr-cluster-role-binding
+subjects:
+- kind: ServiceAccount
+  name: zookeeper-dr-sa
+  apiGroup: ""
+  namespace: default
+roleRef:
+  kind: ClusterRole
+  name: zookeeper-dr-cluster-role
+  apiGroup: rbac.authorization.k8s.io
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: zookeeper-dr-role-binding
+  namespace: default
+subjects:
+- kind: ServiceAccount
+  name: zookeeper-dr-sa
+  apiGroup: ""
+  namespace: default
+roleRef:
+  kind: Role
+  name: zookeeper-dr-role
+  apiGroup: ""
+---
+
+### Install krew which is a kubectl plugin
+kubectl view-serviceaccount-kubeconfig zookeeper-dr-sa -n default -o json > zookeeper-dr-kubeconfig.json
+
+
+---
+### Source cluster 
+
+kubectl create secret generic target-zookeeper-dr --from-file=KUBECONFIG=zookeeper-dr-kubeconfig.json
+
+---
+
+### Create replication target to destination k8s cluster
+
+apiVersion: dataservices.nutanix.com/v1alpha1
+kind: ReplicationTarget
+metadata:
+  name: ocp-ndk-dst
+  namespace: default
+spec:
+  targetClusterSecretRef:
+    name: target-zookeeper-dr
+    key: KUBECONFIG
+
+---
+### Verify that state is ready
+
+oc get replicationtarget.dataservices.nutanix.com/ocp-ndk-dst
+
+NAME          TARGET NAME   TARGET ENDPOINT                              STATE
+ocp-ndk-dst   ocp-ndk-dst   https://api.ocp-ndk-dst.nutanix.local:6443   Ready
+
+---
+### Create an Application spec
+
+apiVersion: dataservices.nutanix.com/v1alpha1
+kind: Application
+metadata:
+  name: zookeeper-application
+  namespace: default
+spec:
+  applicationSelector:
+    # include everything in the namespace.
+
+---
+### Create an ApplicationSnapshot spec
+
+apiVersion: dataservices.nutanix.com/v1alpha1
+kind: ApplicationSnapshot
+metadata:
+  name: zookeeper-application-snapshot1
+  namespace: default
+spec:
+  source:
+    applicationRef:
+     name: zookeeper-application
+     namespace: default
+
+---
+### Verify that state is ready
+
+oc get applicationsnapshot.dataservices.nutanix.com/zookeeper-application-snapshot1 -w
+
+NAME                              AGE   READY   BOUND SNAPSHOT CONTENT
+zookeeper-application-snapshot1   16s           asc-48c5a878-f696-49bb-994d-385d47be349a
+zookeeper-application-snapshot1   23s   true    asc-48c5a878-f696-49bb-994d-385d47be349a
+
+### Also describe the snapshot
+
+status:
+  boundApplicationSnapshotContentName: asc-17feb196-f17b-4b93-9e19-638f5cfc166e
+  readyToUse: true
+
+
+---
+### Create an ApplicationSnapshot Replication spec
+
+apiVersion: dataservices.nutanix.com/v1alpha1
+kind: ApplicationSnapshotReplication
+metadata:
+  name: zookeeper-application-snapshot-replication
+  namespace: default
+spec:
+  applicationSnapshotName: zookeeper-application-snapshot1
+  replicationTargetName: ocp-ndk-dst
+
+---
+
+helm install k8s-agent https://github.com/nutanix-scratch/helm/releases/download/ndk-k8s-agent-rc-5/nutanix-k8s-agent-1.0.418.tgz --kubeconfig /root/ocp-ndk-src/auth/kubeconfig  --set pc.endpoint=kubecon-pc.thencpnutanix.com,k8sClusterUUID="316a0738-eb35-4c8a-baff-fcc65d0d91b0",pc.username=admin,pc.password=tmes4EVA!,k8sClusterName=dm-capx-workload-1,k8sDistribution=CAPX,pc.insecure=true  -n ntnx-system --create-namespace 

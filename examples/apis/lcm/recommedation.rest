@@ -1,0 +1,76 @@
+### Set endpoint
+@pc-ip = {{$dotenv pc-ip}}
+@basic_auth = Basic {{$dotenv username}} {{$dotenv password}}
+@contentType = application/json
+@accept = application/json
+
+
+### GET images
+# @name images
+curl --request GET \
+     --url "https://{{pc-ip}}:9440/api/vmm/v4.0.a1/images" \
+     --header "Accept: {{accept}}" \
+     --header "Content-Type: {{contentType}}" \
+     --header "Authorization: {{basic_auth}}"
+
+
+
+### POST perform LCM inventory
+# @name inventory
+curl --request POST \
+     --url "https://{{pc-ip}}:9440/api/lcm/v4.0.a1/operations/$actions/performInventory" \
+     --header "Accept: {{accept}}" \
+     --header "Content-Type: {{contentType}}" 
+
+
+### GET all LCM entities
+# @name entities
+curl --request GET \
+     --url "https://{{pc-ip}}:9440/api/lcm/v4.0.a1/resources/entities" \
+     --header 'Accept: application/json' \
+     --header "Content-Type: {{contentType}}" \
+     --header "Authorization: {{basic_auth}}"
+
+
+
+### POST a LCM update
+# @name update
+curl --request POST \
+     --url "https://{{pc-ip}}:9440/api/lcm/v4.0.a1/operations/$actions/performUpdate" \
+     --header "Accept: {{accept}}" \
+     --header "Content-Type: {{contentType}}" \
+#     --data {"managementServer":{"hypervisorType":"$UNKNOWN","ip":"string","username":"string","password":"string","$objectType":"lcm.v4.common.ManagementServer"},"entityUpdateSpecs":[{"entityUuid":"string","version":"string","$objectType":"lcm.v4.common.EntityUpdateSpec"}],"skippedPrecheckFlags":["$UNKNOWN"],"autoHandleFlags":["$UNKNOWN"],"waitInSecForAppUp":0,"$objectType":"lcm.v4.common.UpdateSpec"} \
+     --data '{"entityUpdateSpecs":[{"entityUuid":"ecdf9c50-1345-4e23-8112-6a92db857342","version":"2.8.0","$objectType":"lcm.v4.common.EntityUpdateSpec"}],"$objectType":"lcm.v4.common.UpdateSpec"}'
+
+
+
+### POST recommendations
+# @name recommendations
+curl --request POST \
+        --url "https://{{pc-ip}}:9440/api/lcm/v4.0.a1/resources/recommendations" \
+        --header 'Accept: application/json' \
+        --header "Content-Type: {{contentType}}" \
+#        --data {"entityTypes":["software"],"targetEntities":[{"entityClass":"string","entityModel":"string","locationId":"string","id":"string","version":"string","$objectType":"lcm.v4.resources.TargetEntity"}],"entityUpdateSpecs":[{"entityUuid":"string","version":"string","$objectType":"lcm.v4.common.EntityUpdateSpec"}],"entityDeploySpecs":[{"entityClass":"string","entityModel":"string","hardwareFamily":"string","$objectType":"lcm.v4.common.EntityIdentifierSpec"}],"$objectType":"lcm.v4.resources.RecommendationSpec"}
+        --data '{"entityTypes":["software"]}'
+
+
+### POST DNS entries in CF
+# @name dns
+curl --request POST "https://api.cloudflare.com/client/v4/zones/f977077003f1318529790a292b0d4b2f/dns_records" \
+     -H "Authorization: Bearer SdxYjfX068-Tn6QSoORtctIG2CdXlEnB0l8qO3GY" \
+     -H "Content-Type: application/json" \
+     --data '{"type":"A","name":"emea-pc","content":"10.42.236.39","proxied":false}'
+
+curl -X GET "https://api.cloudflare.com/client/v4/zones" \
+     -H "Authorization: Bearer j2bHa5xPvPojjYjQEwe_Ipq0ZAl7AjKUL8RxstQp" \
+     -H "Content-Type:application/json"
+
+curl -X GET "https://api.openshift.com/api/assisted-install/v2/clusters" \
+     -H "Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICItNGVsY19WZE5fV3NPVVlmMkc0UXhyOEdjd0l4X0t0WFVDaXRhdExLbEx3In0.eyJleHAiOjE2ODcxNjczNDIsImlhdCI6MTY4NzE2NjQ0MiwiYXV0aF90aW1lIjoxNjg3MTY2MjAxLCJqdGkiOiIxNDQyZDhkYS05ZDJiLTQ3MWQtOTI3MC03NDkwMWFkNDhiNzQiLCJpc3MiOiJodHRwczovL3Nzby5yZWRoYXQuY29tL2F1dGgvcmVhbG1zL3JlZGhhdC1leHRlcm5hbCIsImF1ZCI6ImNsb3VkLXNlcnZpY2VzIiwic3ViIjoiZjo1MjhkNzZmZi1mNzA4LTQzZWQtOGNkNS1mZTE2ZjRmZTBjZTY6bmltX2t1biIsInR5cCI6IkJlYXJlciIsImF6cCI6ImNsb3VkLXNlcnZpY2VzIiwibm9uY2UiOiIwYWEzOWFlYS00Y2ViLTQyNGYtODk2OS03MjZlNWVhMWU5NTAiLCJzZXNzaW9uX3N0YXRlIjoiOGMwYzFjNDYtZjIwMC00OWQxLTg0YWUtZTI4ZGI5MDdmNmRlIiwiYWxsb3dlZC1vcmlnaW5zIjpbImh0dHBzOi8vY29uc29sZS5kZXYucmVkaGF0LmNvbSIsImh0dHBzOi8vcHJvZC5mb28ucmVkaGF0LmNvbSIsImh0dHBzOi8vZGV2LmZvby5yZWRoYXQuY29tOjEzMzciLCJodHRwczovL2Nsb3VkLm9wZW5zaGlmdC5jb20iLCJodHRwOi8vMTI3LjAuMC4xOjgwMDAiLCJodHRwczovL2NvbnNvbGUucmVkaGF0LmNvbSIsImh0dHBzOi8vcHJvZC5mb28ucmVkaGF0LmNvbToxMzM3IiwiaHR0cHM6Ly9xYXByb2RhdXRoLmNvbnNvbGUucmVkaGF0LmNvbSIsImh0dHBzOi8vZ292LmNvbnNvbGUucmVkaGF0LmNvbSIsImh0dHBzOi8vcWFwcm9kYXV0aC5mb28ucmVkaGF0LmNvbSIsImh0dHBzOi8vYXBpLmNsb3VkLnJlZGhhdC5jb20iLCJodHRwczovL3FhcHJvZGF1dGguY2xvdWQucmVkaGF0LmNvbSIsImh0dHBzOi8vY2xvdWQucmVkaGF0LmNvbSJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsiYXV0aGVudGljYXRlZCIsInBvcnRhbF9tYW5hZ2Vfc3Vic2NyaXB0aW9ucyIsIm9mZmxpbmVfYWNjZXNzIiwiY2FuZGxlcGluX3N5c3RlbV9hY2Nlc3Nfdmlld19lZGl0X2FsbCIsImFkbWluOm9yZzphbGwiLCJwb3J0YWxfbWFuYWdlX2Nhc2VzIiwicG9ydGFsX3N5c3RlbV9tYW5hZ2VtZW50IiwicG9ydGFsX2Rvd25sb2FkIl19LCJzY29wZSI6Im9wZW5pZCBhcGkuaWFtLnNlcnZpY2VfYWNjb3VudHMgYXBpLmlhbS5vcmdhbml6YXRpb24gb2ZmbGluZV9hY2Nlc3MiLCJzaWQiOiI4YzBjMWM0Ni1mMjAwLTQ5ZDEtODRhZS1lMjhkYjkwN2Y2ZGUiLCJhY2NvdW50X251bWJlciI6Ijg4NzA4NzMiLCJpc19pbnRlcm5hbCI6ZmFsc2UsImlzX2FjdGl2ZSI6dHJ1ZSwibGFzdF9uYW1lIjoiS3VubmF0aCIsInByZWZlcnJlZF91c2VybmFtZSI6Im5pbV9rdW4iLCJ0eXBlIjoiVXNlciIsImdpdmVuX25hbWUiOiJOaW1hbCIsImxvY2FsZSI6ImVuX1VTIiwiaXNfb3JnX2FkbWluIjp0cnVlLCJhY2NvdW50X2lkIjoiNTQ5MjM1MTUiLCJ1c2VyX2lkIjoiNTQ5MjM1MTUiLCJvcmdfaWQiOiIxNTcyNTQ0MCIsImZpcnN0X25hbWUiOiJOaW1hbCIsImZhbWlseV9uYW1lIjoiS3VubmF0aCIsImVtYWlsIjoibmltYWwua3VubmF0aEBudXRhbml4LmNvbSIsInVzZXJuYW1lIjoibmltX2t1biJ9.1wbYu6gkZ_doFc8rddGUGmfa2mP4dGULFbcxCiv8asai4CEQyVyrh1SmPMHqINRVWRDw4QOVgnNkjg6dAsx-HQO2HhmKHVVjf-Aq6ppX_6vxNME9-xU_jZxWhPmzydZ-YksqrgdzQeOrTlyUcBjNMpwhz0m76Q0U5nZB6PhTSwXIrrOs19asRT1z39Ymbe5CZeGBTXbzVckSyYdVxfs6aYFuFlGE8UdgD59KqtUvigPPUXgxDJ8d6_i6HW4xvHf9eNnF9ErlJ2YokEdoJQ7bAwA3dhtXCj7o9cBOh2wvi15g27hvvq6ON9GcqmDlvYpFSEYEB17fkpbtdzKE3dPTpOZWgmYcADqveSwhdSpGknKNX-w6jOmXuYqz_HnpNZtqa8f17qJyb_4Z-Fa0Tq-0ZUdzsjMSnRDVYvypZZFbws0Gr1GjSW3-f_8ACX1oSl6GD0-uTxUUkD3zuAbk0HAyVR8skPulIm2FOtr5zRtGUr7L7VWrUvFqKcWcjc-pzIgZXEaKKjQDh_6-Tadu8MNmGw_3adgwn0vEPDICcMrxlbBKgo0tsi_WP0WasBKIMEo0ORH6v3nhMc7r64CjKRImnM2Lz3ShfNw8HIQ4FLUiwIdWQMGQHGz9CXZuA_oJ6mDfRvx5cr8df4xPdLGX2EPmFjBjynKuZ8Pht2JDF8TQkQA" \
+     -H "Content-Type:application/json"
+
+     222cab6c-fbb0-460b-967b-2d9504f57d20
+
+curl -X GET "https://api.openshift.com/api/assisted-install/v2/clusters/222cab6c-fbb0-460b-967b-2d9504f57d20/supported-platforms" \
+     -H "Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICItNGVsY19WZE5fV3NPVVlmMkc0UXhyOEdjd0l4X0t0WFVDaXRhdExLbEx3In0.eyJleHAiOjE2ODcxNjczNDIsImlhdCI6MTY4NzE2NjQ0MiwiYXV0aF90aW1lIjoxNjg3MTY2MjAxLCJqdGkiOiIxNDQyZDhkYS05ZDJiLTQ3MWQtOTI3MC03NDkwMWFkNDhiNzQiLCJpc3MiOiJodHRwczovL3Nzby5yZWRoYXQuY29tL2F1dGgvcmVhbG1zL3JlZGhhdC1leHRlcm5hbCIsImF1ZCI6ImNsb3VkLXNlcnZpY2VzIiwic3ViIjoiZjo1MjhkNzZmZi1mNzA4LTQzZWQtOGNkNS1mZTE2ZjRmZTBjZTY6bmltX2t1biIsInR5cCI6IkJlYXJlciIsImF6cCI6ImNsb3VkLXNlcnZpY2VzIiwibm9uY2UiOiIwYWEzOWFlYS00Y2ViLTQyNGYtODk2OS03MjZlNWVhMWU5NTAiLCJzZXNzaW9uX3N0YXRlIjoiOGMwYzFjNDYtZjIwMC00OWQxLTg0YWUtZTI4ZGI5MDdmNmRlIiwiYWxsb3dlZC1vcmlnaW5zIjpbImh0dHBzOi8vY29uc29sZS5kZXYucmVkaGF0LmNvbSIsImh0dHBzOi8vcHJvZC5mb28ucmVkaGF0LmNvbSIsImh0dHBzOi8vZGV2LmZvby5yZWRoYXQuY29tOjEzMzciLCJodHRwczovL2Nsb3VkLm9wZW5zaGlmdC5jb20iLCJodHRwOi8vMTI3LjAuMC4xOjgwMDAiLCJodHRwczovL2NvbnNvbGUucmVkaGF0LmNvbSIsImh0dHBzOi8vcHJvZC5mb28ucmVkaGF0LmNvbToxMzM3IiwiaHR0cHM6Ly9xYXByb2RhdXRoLmNvbnNvbGUucmVkaGF0LmNvbSIsImh0dHBzOi8vZ292LmNvbnNvbGUucmVkaGF0LmNvbSIsImh0dHBzOi8vcWFwcm9kYXV0aC5mb28ucmVkaGF0LmNvbSIsImh0dHBzOi8vYXBpLmNsb3VkLnJlZGhhdC5jb20iLCJodHRwczovL3FhcHJvZGF1dGguY2xvdWQucmVkaGF0LmNvbSIsImh0dHBzOi8vY2xvdWQucmVkaGF0LmNvbSJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsiYXV0aGVudGljYXRlZCIsInBvcnRhbF9tYW5hZ2Vfc3Vic2NyaXB0aW9ucyIsIm9mZmxpbmVfYWNjZXNzIiwiY2FuZGxlcGluX3N5c3RlbV9hY2Nlc3Nfdmlld19lZGl0X2FsbCIsImFkbWluOm9yZzphbGwiLCJwb3J0YWxfbWFuYWdlX2Nhc2VzIiwicG9ydGFsX3N5c3RlbV9tYW5hZ2VtZW50IiwicG9ydGFsX2Rvd25sb2FkIl19LCJzY29wZSI6Im9wZW5pZCBhcGkuaWFtLnNlcnZpY2VfYWNjb3VudHMgYXBpLmlhbS5vcmdhbml6YXRpb24gb2ZmbGluZV9hY2Nlc3MiLCJzaWQiOiI4YzBjMWM0Ni1mMjAwLTQ5ZDEtODRhZS1lMjhkYjkwN2Y2ZGUiLCJhY2NvdW50X251bWJlciI6Ijg4NzA4NzMiLCJpc19pbnRlcm5hbCI6ZmFsc2UsImlzX2FjdGl2ZSI6dHJ1ZSwibGFzdF9uYW1lIjoiS3VubmF0aCIsInByZWZlcnJlZF91c2VybmFtZSI6Im5pbV9rdW4iLCJ0eXBlIjoiVXNlciIsImdpdmVuX25hbWUiOiJOaW1hbCIsImxvY2FsZSI6ImVuX1VTIiwiaXNfb3JnX2FkbWluIjp0cnVlLCJhY2NvdW50X2lkIjoiNTQ5MjM1MTUiLCJ1c2VyX2lkIjoiNTQ5MjM1MTUiLCJvcmdfaWQiOiIxNTcyNTQ0MCIsImZpcnN0X25hbWUiOiJOaW1hbCIsImZhbWlseV9uYW1lIjoiS3VubmF0aCIsImVtYWlsIjoibmltYWwua3VubmF0aEBudXRhbml4LmNvbSIsInVzZXJuYW1lIjoibmltX2t1biJ9.1wbYu6gkZ_doFc8rddGUGmfa2mP4dGULFbcxCiv8asai4CEQyVyrh1SmPMHqINRVWRDw4QOVgnNkjg6dAsx-HQO2HhmKHVVjf-Aq6ppX_6vxNME9-xU_jZxWhPmzydZ-YksqrgdzQeOrTlyUcBjNMpwhz0m76Q0U5nZB6PhTSwXIrrOs19asRT1z39Ymbe5CZeGBTXbzVckSyYdVxfs6aYFuFlGE8UdgD59KqtUvigPPUXgxDJ8d6_i6HW4xvHf9eNnF9ErlJ2YokEdoJQ7bAwA3dhtXCj7o9cBOh2wvi15g27hvvq6ON9GcqmDlvYpFSEYEB17fkpbtdzKE3dPTpOZWgmYcADqveSwhdSpGknKNX-w6jOmXuYqz_HnpNZtqa8f17qJyb_4Z-Fa0Tq-0ZUdzsjMSnRDVYvypZZFbws0Gr1GjSW3-f_8ACX1oSl6GD0-uTxUUkD3zuAbk0HAyVR8skPulIm2FOtr5zRtGUr7L7VWrUvFqKcWcjc-pzIgZXEaKKjQDh_6-Tadu8MNmGw_3adgwn0vEPDICcMrxlbBKgo0tsi_WP0WasBKIMEo0ORH6v3nhMc7r64CjKRImnM2Lz3ShfNw8HIQ4FLUiwIdWQMGQHGz9CXZuA_oJ6mDfRvx5cr8df4xPdLGX2EPmFjBjynKuZ8Pht2JDF8TQkQA" \
+     -H "Content-Type:application/json"

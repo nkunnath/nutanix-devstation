@@ -1,0 +1,57 @@
+### Set endpoint
+@zone-id = {{$dotenv zone-id}}
+@contentType = application/json
+@accept = application/json
+@id = {{$dotenv id}}
+
+
+
+### GET all DNS records in a zone
+# @name record
+curl --request GET \
+     --url "https://api.cloudflare.com/client/v4/zones/{{zone-id}}/dns_records" \
+     --header "Content-Type: {{contentType}}" \
+     --header "Authorization: Bearer SdxYjfX068-Tn6QSoORtctIG2CdXlEnB0l8qO3GY" 
+
+### Set a variable to GET a record
+@myrecord = {{record.response}}
+
+
+### POST DNS record in a zone
+# @name create
+curl --request POST \
+     --url "https://api.cloudflare.com/client/v4/zones/{{zone-id}}/dns_records" \
+     --header "Content-Type: {{contentType}}" \
+     --header "Authorization: Bearer SdxYjfX068-Tn6QSoORtctIG2CdXlEnB0l8qO3GY" 
+    --data '{
+                "name": "my-pc.",
+                "content": "10.42.236.39",
+                "proxied": false,
+                "type": "A",
+                "comment": "New record for my-pc"
+            }'
+
+
+
+### UPDATE DNS record in a zone and give the DNS id from .env
+# @name update
+
+curl --request PUT \
+     --url "https://api.cloudflare.com/client/v4/zones/{{zone-id}}/dns_records/{{id}}" \
+     --header "Content-Type: {{contentType}}" \
+     --header "Authorization: Bearer SdxYjfX068-Tn6QSoORtctIG2CdXlEnB0l8qO3GY" \
+    --data '{
+                "name": "my-pc.",
+                "content": "10.42.236.39",
+                "proxied": false,
+                "type": "A"
+           }'
+
+
+### DELETE DNS record in a zone and give the DNS id from .env
+# @name delete
+curl --request DELETE \
+     --url "https://api.cloudflare.com/client/v4/zones/{{zone-id}}/dns_records/{{id}}" \
+     --header "Content-Type: {{contentType}}" \
+     --header "Authorization: Bearer SdxYjfX068-Tn6QSoORtctIG2CdXlEnB0l8qO3GY"
+
