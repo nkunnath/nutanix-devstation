@@ -1,0 +1,10 @@
+ip: demo-pc.thencpnutanix.com
+username: admin
+password: tmes4EVA!
+cluster: PHX-MKT236
+network_name: Primary
+
+source_uri: https://capx-img.s3.eu-west-3.amazonaws.com/rockylinux-9-kube-v1.28.4.qcow2
+#source_uri: https://cloud-images.ubuntu.com/jammy/20230817/jammy-server-cloudimg-amd64.img
+image_name: RockyLinux_9_kube-v1.28.4
+vm_name: RockyLinux_9

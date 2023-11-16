@@ -1,0 +1,54 @@
+#cloud-config
+users:
+  - name: nutanix
+    sudo: ['ALL=(ALL) NOPASSWD:ALL']
+    ssh-authorized-keys:
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC8fU0qGbOJrtATsdABLDkNTivxB12EHQiB8kXRWwN4ppZd8Pv0RsB3oocnhI9fpy00BBOPjgupBigxul8TDlwlZLkXbfHVkHdAVQaqYQ4okA1AdR2kzHjUikBAbHrcSRc3V+e7xRb2MhLZlMo8Xabo4sEkRH7A6vplZSa63A/kEFrE0a3QaQSdS+/JVrgUFGmFp+KydeQq0TqrxUqNZkPpdmlJI4aErMJl8lsNa+EEBkZapqrGDcCej9MtW4qS229ve5bY2r1lD6RqMaty9IwigziR/Xj0grkEEv10joSp+9f46rg1DWKCF8+Qe20o1KQGtg1ztwYMUoEBE9qvbY5UK6HDqfUMXviOw0+/A9kxsQIV+NwUR5tVcdcuR2LeihKoOCYnJb1sNDcsANFLkyHYwojNbyCXD/MzsZbclIWZbEMaHFNVlI87QWc7gANRx7TUSkdUR5U5xoif/UoDZHY529jWDuS2Bd1Q7KtO89t2NCoQrthYFPUlj861EShvPyc= vscode@ceee2e2d0200
+    lock-passwd: false
+    passwd: $6$4guEcDvX$HBHMFKXp4x/Eutj0OW5JGC6f1toudbYs.q.WkvXGbUxUTzNcHawKRRwrPehIxSXHVc70jFOp3yb8yZgjGUuET.
+
+# note: the encoded password hash above is "nutanix/4u" (without the quotes)
+
+yum_repos:
+  epel-release:
+    baseurl: http://download.fedoraproject.org/pub/epel/7/$basearch
+    enabled: true
+    failovermethod: priority
+    gpgcheck: true
+    gpgkey: http://download.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-7
+    name: Extra Packages for Enterprise Linux 7 - Release
+
+package_update: true
+package_upgrade: true
+
+hostname: centos7-tools-vm
+
+packages:
+  - gcc-c++
+  - make
+  - unzip
+  - bash-completion
+  - python-pip
+  - s3cmd
+  - stress
+  - awscli
+  - ntp
+  - ntpdate
+  - nodejs
+  - python36
+  - python36-setuptools
+  - jq
+
+runcmd:
+  - npm install -g request express
+  - systemctl stop firewalld
+  - systemctl disable firewalld
+  - /sbin/setenforce 0
+  - sed -i -e 's/enforcing/disabled/g' /etc/selinux/config
+  - /bin/python3.6 -m ensurepip
+  - pip install -U pip
+  - pip install boto3 python-magic
+  - ntpdate -u -s 0.pool.ntp.org 1.pool.ntp.org 2.pool.ntp.org 3.pool.ntp.org
+  - systemctl restart ntpd
+
+final_message: CentOS 7 Tools Machine setup successfully!

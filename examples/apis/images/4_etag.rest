@@ -12,7 +12,7 @@ curl --request GET \
      --header "Accept: {{accept}}" \
      --header "Content-Type: {{contentType}}" \
      --header "Authorization: {{basic_auth}}" \
-     --url "https://{{pc-ip}}:9440/api/vmm/v4.0.a1/images?$filter=name eq 'ubuntu'"
+     --url "https://{{pc-ip}}:9440/api/vmm/v4.0.a1/images?$filter=name eq 'Linux_ToolsVM.qcow2'"
      
 
 
