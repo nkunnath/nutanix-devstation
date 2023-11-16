@@ -1,16 +1,16 @@
 #cloud-config
 
 # Set the hostname
-hostname: nimal
+hostname: abc
 
 # Create a new user
 users:
-  - name: nimal
+  - name: abc
     groups: sudo
     ssh_authorized_keys:
     # Paste the generated public key here
     #- ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC8fU0qGbOJrtATsdABLDkNTivxB12EHQiB8kXRWwN4ppZd8Pv0RsB3oocnhI9fpy00BBOPjgupBigxul8TDlwlZLkXbfHVkHdAVQaqYQ4okA1AdR2kzHjUikBAbHrcSRc3V+e7xRb2MhLZlMo8Xabo4sEkRH7A6vplZSa63A/kEFrE0a3QaQSdS+/JVrgUFGmFp+KydeQq0TqrxUqNZkPpdmlJI4aErMJl8lsNa+EEBkZapqrGDcCej9MtW4qS229ve5bY2r1lD6RqMaty9IwigziR/Xj0grkEEv10joSp+9f46rg1DWKCF8+Qe20o1KQGtg1ztwYMUoEBE9qvbY5UK6HDqfUMXviOw0+/A9kxsQIV+NwUR5tVcdcuR2LeihKoOCYnJb1sNDcsANFLkyHYwojNbyCXD/MzsZbclIWZbEMaHFNVlI87QWc7gANRx7TUSkdUR5U5xoif/UoDZHY529jWDuS2Bd1Q7KtO89t2NCoQrthYFPUlj861EShvPyc= vscode@ceee2e2d0200
-      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCpTAxjZAS0KZhUyZJhjqKOnsHXlFOBjhv2MAeDiSN1blUhklWjFmFl8vbLkYMW69GEu8d7ymp1JhUVkt2l6Qfld8inWTuSVFQJ2cMnifiyvXiBeHczP33iCA5a0Tf85alH8wvoOUTdzgRmGKnoho+b+cD73YsDstodhF9iu1FZdyT4bF8OnppDNoTSaUhEkBgdAzjAb2kCr0R7R8xnRrGaU5o6sH7zyeULmclZiYV+OFh2mx52A6UDAZTyWDu4N42GTFSSgkqyuafWNfPTy8qfRa24c4th3Dgnz9jSFQA8k58YnWsstT0ALmWKfbLKjOL+r/d6CvxJLL9tQMR/tmsFNdHlUIatqsOhKZDDjDzLoS/C4OroHXCMc+ykY+5uwavPRwUlWaY+kWjfES7kD8Urs07MVLW8yFvjE6DnsRKsEdSg+oPvVtMpywBgLUFlz9CnpTnt8BTilE+ynVqKFl2qbozM/7cUG9hRQBiriicq1aDy+XAUgDkDLQKp4mUTRI8= nimal.kunnath@C02C74VJLVDL
+      - ""
     # You can also use the salter 1N or 6N format using OPENSSL (openssl passwd -1 -salt SaltSalt "yourplaintextpassword")
     # Paste the generated password here
     sudo: ['ALL=(ALL) NOPASSWD:ALL']
@@ -52,15 +52,6 @@ runcmd:
 
 
 
-#cloud-config
-users:
-  - name: nimal
-    gecos: Nimal
-    sudo: ['ALL=(ALL) NOPASSWD:ALL']
-    shell: /bin/bash
-    groups: sudo
-    ssh-authorized-keys:
-      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIC+SPFPQsTgPRpA09P+MNaCB0nrOZfo/kQMBOWLPKIeW cris@geo6.net
 
 runcmd:
   - apt update

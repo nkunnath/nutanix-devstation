@@ -11,7 +11,7 @@
 curl --request GET \
      --url "https://api.cloudflare.com/client/v4/zones/{{zone-id}}/dns_records" \
      --header "Content-Type: {{contentType}}" \
-     --header "Authorization: Bearer SdxYjfX068-Tn6QSoORtctIG2CdXlEnB0l8qO3GY" 
+     --header "Authorization: Bearer aSdX068-Tn6QSoORtl8qO3GY" 
 
 ### Set a variable to GET a record
 @myrecord = {{record.response}}
@@ -22,7 +22,7 @@ curl --request GET \
 curl --request POST \
      --url "https://api.cloudflare.com/client/v4/zones/{{zone-id}}/dns_records" \
      --header "Content-Type: {{contentType}}" \
-     --header "Authorization: Bearer SdxYjfX068-Tn6QSoORtctIG2CdXlEnB0l8qO3GY" 
+     --header "Authorization: Bearer SdxYjfX-oORtctIG2CdXlEnB0l8" 
     --data '{
                 "name": "my-pc.",
                 "content": "10.42.236.39",
@@ -39,7 +39,7 @@ curl --request POST \
 curl --request PUT \
      --url "https://api.cloudflare.com/client/v4/zones/{{zone-id}}/dns_records/{{id}}" \
      --header "Content-Type: {{contentType}}" \
-     --header "Authorization: Bearer SdxYjfX068-Tn6QSoORtctIG2CdXlEnB0l8qO3GY" \
+     --header "Authorization: Bearer sadfXggg-76dgaRtctIG2Cd" \
     --data '{
                 "name": "my-pc.",
                 "content": "10.42.236.39",

@@ -8,7 +8,7 @@
     group/nutanix.ncp.ntnx:
       nutanix_host: "demo-pc.thencpnutanix.com"
       nutanix_username: "admin"
-      nutanix_password: "tmes4EVA!"
+      nutanix_password: ""
       validate_certs: false
   tasks:
     - name: Include vars file

@@ -3,7 +3,7 @@ users:
   - name: nutanix
     sudo: ['ALL=(ALL) NOPASSWD:ALL']
     ssh-authorized-keys:
-      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC8fU0qGbOJrtATsdABLDkNTivxB12EHQiB8kXRWwN4ppZd8Pv0RsB3oocnhI9fpy00BBOPjgupBigxul8TDlwlZLkXbfHVkHdAVQaqYQ4okA1AdR2kzHjUikBAbHrcSRc3V+e7xRb2MhLZlMo8Xabo4sEkRH7A6vplZSa63A/kEFrE0a3QaQSdS+/JVrgUFGmFp+KydeQq0TqrxUqNZkPpdmlJI4aErMJl8lsNa+EEBkZapqrGDcCej9MtW4qS229ve5bY2r1lD6RqMaty9IwigziR/Xj0grkEEv10joSp+9f46rg1DWKCF8+Qe20o1KQGtg1ztwYMUoEBE9qvbY5UK6HDqfUMXviOw0+/A9kxsQIV+NwUR5tVcdcuR2LeihKoOCYnJb1sNDcsANFLkyHYwojNbyCXD/MzsZbclIWZbEMaHFNVlI87QWc7gANRx7TUSkdUR5U5xoif/UoDZHY529jWDuS2Bd1Q7KtO89t2NCoQrthYFPUlj861EShvPyc= vscode@ceee2e2d0200
+      - ""
     lock-passwd: false
     passwd: $6$4guEcDvX$HBHMFKXp4x/Eutj0OW5JGC6f1toudbYs.q.WkvXGbUxUTzNcHawKRRwrPehIxSXHVc70jFOp3yb8yZgjGUuET.
 

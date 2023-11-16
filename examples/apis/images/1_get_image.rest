@@ -9,6 +9,18 @@
 
 
 
+### GET clusters
+# @name cluster
+curl --request GET \
+     --url "https://{{pc-ip}}:9440/api/clustermgmt/v4.0.b1/config/clusters"
+     --header "Accept: {{accept}}" \
+     --header "Content-Type: {{contentType}}" \
+     --header "Authorization: {{basic_auth}}"
+
+
+
+
+
 
 ### GET images
 # @name images

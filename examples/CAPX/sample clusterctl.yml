@@ -1,7 +1,7 @@
 CONTROL_PLANE_ENDPOINT_IP: "10.42.236.126"   # An IP address not in IPAM
-NUTANIX_ENDPOINT: "my-pc.thencpnutanix.com"    # IP or FQDN of Prism Central
+NUTANIX_ENDPOINT: ""    # IP or FQDN of Prism Central
 NUTANIX_USER: "admin"        # Prism Central user
-NUTANIX_PASSWORD: "tmes4EVA!"    # Prism Central password
+NUTANIX_PASSWORD: ""    # Prism Central password
 NUTANIX_INSECURE: true # or true
 
 KUBERNETES_VERSION: "v1.25.9"

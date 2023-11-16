@@ -4,13 +4,13 @@
 
 curl  -k -X 'POST' 'https://demo-pc.thencpnutanix.com:9440/api/nutanix/v3/availability_zones/list' \
 -H 'accept: application/json' \
--u admin:tmes4EVA! \
+-u admin:password  \
 -H 'Content-Type: application/json' \
 -H 'X-Nutanix-Client-Type: ui' \
 -d '{"kind": "availability_zone"}
 
 
-curl -k -X 'GET' -H 'accept: application/json' 'https://10.42.236.37:9440/api/nutanix/v2.0/cluster' -u admin:tmes4EVA! 
+curl -k -X 'GET' -H 'accept: application/json' 'https://10.42.236.37:9440/api/nutanix/v2.0/cluster' -u admin:password 
 
 ---
 
@@ -202,5 +202,3 @@ spec:
   replicationTargetName: ocp-ndk-dst
 
 ---
-
-helm install k8s-agent https://github.com/nutanix-scratch/helm/releases/download/ndk-k8s-agent-rc-5/nutanix-k8s-agent-1.0.418.tgz --kubeconfig /root/ocp-ndk-src/auth/kubeconfig  --set pc.endpoint=kubecon-pc.thencpnutanix.com,k8sClusterUUID="316a0738-eb35-4c8a-baff-fcc65d0d91b0",pc.username=admin,pc.password=tmes4EVA!,k8sClusterName=dm-capx-workload-1,k8sDistribution=CAPX,pc.insecure=true  -n ntnx-system --create-namespace 

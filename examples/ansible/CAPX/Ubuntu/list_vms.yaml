@@ -11,7 +11,7 @@
       # nutanix_password: "tmes4EVA!"
       #nutanix_host: "10.42.82.39"
       nutanix_username: "admin"
-      nutanix_password: "tmes4EVA!"
+      nutanix_password: ""
       validate_certs: false
   tasks:
     - name: Include vars file

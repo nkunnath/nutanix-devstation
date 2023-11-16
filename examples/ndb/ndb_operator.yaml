@@ -249,19 +249,3 @@ spec:
   ndbRef: ndbserver-kubecon
 
 
-
----
-
-oc exec -it psql -- /bin/sh
-
-psql -h nk-demo1-svc -p 80 -U postgres -d redhat
-
-mongosh admin --host mongodb-sla-svc --authenticationDatabase mongodb_sla_database_one -u admin -p tmes4EVA!
-
-
-
-Connect as user era
-ssh era@10.42.36.189
-psql "postgresql://10.42.36.189:5432/postgres?user=postgres&password=nutanix/4u" postgres -c "\d ;"
-
----

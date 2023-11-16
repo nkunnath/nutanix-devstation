@@ -1,14 +1,8 @@
 ip: demo-pc.thencpnutanix.com
 username: admin
-password: tmes4EVA!
+password: ""
 cluster: PHX-MKT236
 network_name: Primary
-
-# ip: 10.42.184.4
-# username: admin
-# password: CUPCAKE4ever?
-# cluster: Astro-AHV
-# network_name: Demo_VMs
 
 source_uri: https://capx-img.s3.eu-west-3.amazonaws.com/ubuntu-2204-kube-v1.25.13.qcow2
 #source_uri: https://cloud-images.ubuntu.com/jammy/20230817/jammy-server-cloudimg-amd64.img
